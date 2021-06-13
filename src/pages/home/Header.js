@@ -27,7 +27,7 @@ const Header = (props)=> {
                 let p = hasPro.length ?  hasPro.includes(project) : true;
                 found = found.filter(fName =>hasFound.length ? hasFound.includes(fName) : true);
                 let f = found.length > 0;
-                if( time.length && ( date < time[0] || date> time[1])){
+                if(time &&  time.length && ( date < time[0] || date> time[1])){
                     t = false
                 };
                 return t && p && f;
@@ -90,7 +90,7 @@ const Header = (props)=> {
     }
 
     const onChangeTime = (value)=> {
-        if(value.length){
+        if(value && value.length){
             setTime([
                 moment(new Date(value[0])).format('YYYY.HH.DD'),
                 moment(new Date(value[1])).format('YYYY.HH.DD')
