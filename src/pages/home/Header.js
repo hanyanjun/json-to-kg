@@ -26,62 +26,111 @@ const Header = (props)=> {
                 let t = true;
                 let p = hasPro.length ?  hasPro.includes(project) : true;
                 found = found.filter(fName =>hasFound.length ? hasFound.includes(fName) : true);
+                item.allFounds = [...item.found];
+                item.found = found;
                 let f = found.length > 0;
+                if(hasFound.length){
+                    f = found.length === hasFound.length
+                }
                 if(time &&  time.length && ( date < time[0] || date> time[1])){
                     t = false
                 };
                 return t && p && f;
              });
+             console.log(data);
             //  根据过滤后的数据生成 节点和 关系图
-             let nodes = [] , relations = [] , nodesMap = {};
+             let nodes = [] , relations = [] ;
              for (const item of data) {
                 let {date , description , found ,  id ,  project , round} = item;
-                if(!nodesMap[project]){
-                    nodesMap[project] = { 
-                        id : project ,  
-                        properties : { list : [] , type : 'project' , project , name : project }
+                let startNode = {} , endNode = {}  ;
+                // 根据信息生成节点
+                endNode = {
+                    id : project,
+                    labels : ['Project'],
+                    className : 'Project',
+                    properties : {
+                        type : 'project',
+                        project,
+                        date ,
+                        name : project,
+                        id,
+                        description,
+                        round
                     }
                 }
-                nodesMap[project].properties.list.push({
-                    id ,
-                    date ,
-                    found,
-                    description,
-                    round,
-                })
-                 for (const foundItem of found) {
-                     if(!nodesMap[foundItem]){
-                        nodesMap[foundItem] = { 
-                            id : foundItem , 
-                            properties : { list : [] , type : 'found' , project , name : foundItem}
-                        }
-                     }
-                     nodesMap[project].properties.list.push({
-                         id ,
-                         date ,
-                         project
-                     })
-                 }
-             };
-             for (const key in nodesMap) {
-                 if (Object.hasOwnProperty.call(nodesMap, key)) {
-                     const nodeItem = nodesMap[key];
-                     nodes.push(nodeItem);
-                     let id = nodeItem.id;
-                     let {type ,  project} = nodeItem.properties;
-                     if(type === 'found'){
-                         relations.push({
-                             id : `${id}-${project}`,
-                             startNodeId : id,
+                for (const foundItem of found) {
+                    startNode = {
+                        id : foundItem,
+                        labels : ['Person'],
+                        className : 'Person',
+                        properties : {type : 'found' , project , name : foundItem , date } 
+                    }
+                    relations.push({
+                             id : `${foundItem}-${project}`,
+                             startNodeId : foundItem,
                              endNodeId : project,
                              type : 'found to project',
                              properties : {
                                  name : `${id}->${project}`
                              }
-                         })
-                     }       
-                 }
+                    })
+                    nodes.push(startNode);
+                }
+
+                nodes.push(endNode);
              }
+            //  for (const item of data) {
+            //     let {date , description , found ,  id ,  project , round} = item;
+            //     if(!nodesMap[project]){
+            //         nodesMap[project] = { 
+            //             id : project ,  
+            //             properties : { list : [] , type : 'project' , project , name : project }
+            //         }
+            //     }
+            //     nodesMap[project].properties.list.push({
+            //         id ,
+            //         date ,
+            //         found,
+            //         description,
+            //         round,
+            //     })
+            //      for (const foundItem of found) {
+            //          if(!nodesMap[foundItem]){
+            //             nodesMap[foundItem] = { 
+            //                 id : foundItem , 
+            //                 properties : { list : [] , type : 'found' , project , name : foundItem}
+            //             }
+            //          }
+            //          nodesMap[foundItem].properties.list.push({
+            //              id  ,
+            //              date ,
+            //              project,
+            //              round,
+            //              description
+            //          })
+            //      }
+            //  };
+            //  console.log(nodesMap)
+            //  for (const key in nodesMap) {
+            //      if (Object.hasOwnProperty.call(nodesMap, key)) {
+            //          const nodeItem = nodesMap[key];
+            //          nodes.push(nodeItem);
+            //          let id = nodeItem.id;
+            //          let {type ,  project} = nodeItem.properties;
+            //          if(type === 'found'){
+            //              relations.push({
+            //                  id : `${id}-${project}`,
+            //                  startNodeId : id,
+            //                  endNodeId : project,
+            //                  type : 'found to project',
+            //                  properties : {
+            //                      name : `${id}->${project}`
+            //                  }
+            //              })
+            //          }       
+            //      }
+            //  }
+
              props.onGeneral && props.onGeneral({nodes , relations})
 
         }else{
@@ -159,7 +208,7 @@ const Header = (props)=> {
             <Select
                 mode="multiple"
                 style={{ width: '40%'  , marginLeft : 10}}
-                placeholder="选择项目"
+                placeholder="project"
                 value={hasPro}
                 onChange={onChangeSelectPro}
                 optionLabelProp="label"
@@ -177,7 +226,7 @@ const Header = (props)=> {
             <Select
                 mode="multiple"
                 style={{ width: '40%' , marginLeft : 15}}
-                placeholder="选择投资人"
+                placeholder="found"
                 value={hasFound}
                 onChange={onChangeSelectFound}
                 optionLabelProp="label"

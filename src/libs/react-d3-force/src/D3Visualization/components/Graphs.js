@@ -31,7 +31,7 @@ const deduplicateNodes = nodes => {
 export class GraphComponent extends Component {
   constructor(props){
     super(props);
-    const graphStyle = neoGraphStyle()
+    const graphStyle = neoGraphStyle();
     this.defaultStyle = graphStyle.toSheet()
     if (this.props.graphStyleData) {
       const rebasedStyle = deepmerge(

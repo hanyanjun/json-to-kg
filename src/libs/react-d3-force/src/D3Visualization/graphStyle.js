@@ -7,7 +7,7 @@ export default function neoGraphStyle() {
   // 修改默认的样式
   const defaultStyle = {
     "node": {
-      "diameter": "35px",
+      "diameter": "60px",
       "color": "#f9d684",
       "border-color": "#f9d684",
       "border-width": "2px",
@@ -48,7 +48,7 @@ export default function neoGraphStyle() {
       "caption": "<type>"
     },
     "node.Project": {
-      "color": "#346894",
+      "color": "#346894" ,
       "border-color": "#346894",
       "text-color-internal": "#FFFFFF",
       "defaultCaption": "<id>",
@@ -76,7 +76,7 @@ export default function neoGraphStyle() {
       "defaultCaption": "<id>",
       "diameter": "50px"
     },
-    "node.Person": {
+    ".node.Person": {
       "color": "#d79d53",
       "border-color": "#d79d53",
       "text-color-internal": "#1c1c1c",

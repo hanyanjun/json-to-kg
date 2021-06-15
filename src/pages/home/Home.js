@@ -1,7 +1,9 @@
-import React, {  useRef } from "react"
+import React, {  useRef, useState } from "react"
 import D3Force from "../../libs/react-d3-force/src/D3Visualization/components/Graphs"
 import Header from "./Header"
+import Drawer from "./Drawer"
 import  "./Home.scss"
+import { Empty } from 'antd';
 
 
         // d3Force.current.initGraph({
@@ -30,8 +32,23 @@ import  "./Home.scss"
 export default function(){
     const d3Force = useRef(null);
     const isFirst = useRef(null);
+    const [show,setShow] = useState(false);
+    const [node , setNode] = useState({});
+    const [num , setNum] = useState(0);
+
+    const onItemSelect = (item)=> {
+        if(item.type === 'node'){
+            setShow(true);
+            setNode(item.item)
+        }
+    }
+
+    const onClose = ()=> {
+        setShow(false)
+    }
 
     const onGeneral = ({nodes , relations})=>{
+        setNum(nodes.length);
         if(!isFirst.current){
             d3Force.current.initGraph({
                 nodes,
@@ -48,13 +65,19 @@ export default function(){
     return(
         <div>
             <Header onGeneral={onGeneral}></Header>
+            <Drawer  visible={show} onClose={onClose} info={node}/>
             <div className="graph">
+                {num === 0 && (
+                    <div className="empty">
+                        <Empty  image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                    </div>
+                )}
                 <D3Force  
                     ref={d3Force}
                     getStats={function(){}}
                     onItemMouseOver={function(){}}  
                     onEventListener = { function (){}}
-                    onItemSelect={function(item){}}
+                    onItemSelect={onItemSelect}
                 ></D3Force> 
             </div>
         </div>
