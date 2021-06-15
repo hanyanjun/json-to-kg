@@ -4,6 +4,7 @@ import { DatePicker , Row , Col , Select , Button, message} from 'antd';
 import moment from "moment";
 import zhCN from 'antd/es/date-picker/locale/zh_CN';
 import { UploadOutlined } from '@ant-design/icons';
+import _ from "lodash"
 
 const { RangePicker } = DatePicker;
 
@@ -19,7 +20,8 @@ const Header = (props)=> {
 
     const toGeneralGraph = ()=> {
         // 过滤时间
-        let json = jsonData.current;
+        let json = _.cloneDeep(jsonData.current);
+        console.log(hasFound)
         if(json && json.length){
              let data = json.filter(item => {
                 let {date = '',  found = [],    project = ''} = item;
