@@ -21,7 +21,6 @@ const Header = (props)=> {
     const toGeneralGraph = ()=> {
         // 过滤时间
         let json = _.cloneDeep(jsonData.current);
-        console.log(hasFound)
         if(json && json.length){
              let data = json.filter(item => {
                 let {date = '',  found = [],    project = ''} = item;
@@ -39,7 +38,6 @@ const Header = (props)=> {
                 };
                 return t && p && f;
              });
-             console.log(data);
             //  根据过滤后的数据生成 节点和 关系图
              let nodes = [] , relations = [] ;
              for (const item of data) {
@@ -65,13 +63,13 @@ const Header = (props)=> {
                         id : foundItem,
                         labels : ['Person'],
                         className : 'Person',
-                        properties : {type : 'found' , project , name : foundItem , date } 
+                        properties : {type : 'fund' , project , name : foundItem , date } 
                     }
                     relations.push({
                              id : `${foundItem}-${project}`,
                              startNodeId : foundItem,
                              endNodeId : project,
-                             type : 'found to project',
+                             type : 'fund to project',
                              properties : {
                                  name : `${id}->${project}`
                              }
@@ -228,7 +226,7 @@ const Header = (props)=> {
             <Select
                 mode="multiple"
                 style={{ width: '40%' , marginLeft : 15}}
-                placeholder="found"
+                placeholder="fund"
                 value={hasFound}
                 onChange={onChangeSelectFound}
                 optionLabelProp="label"
