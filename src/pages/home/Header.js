@@ -46,11 +46,12 @@ const Header = (props)=> {
                 // 根据信息生成节点
                 endNode = {
                     id : project,
-                    labels : ['Project'],
+                    labels : ["Project"],
                     className : 'Project',
                     properties : {
                         type : 'project',
                         project,
+                        label_for_match: "Project",
                         date ,
                         name : project,
                         id,
@@ -63,7 +64,8 @@ const Header = (props)=> {
                         id : foundItem,
                         labels : ['Person'],
                         className : 'Person',
-                        properties : {type : 'fund' , project , name : foundItem , date } 
+                        properties : {type : 'fund' ,
+                        label_for_match: "Person", project , name : foundItem , date } 
                     }
                     relations.push({
                              id : `${foundItem}-${project}`,
