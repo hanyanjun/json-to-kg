@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from "react";
-import { DatePicker , Row , Col , Select , Button, message} from 'antd';
+import { DatePicker, Row, Col, Select, Button, message } from 'antd';
 import moment from "moment";
 import zhCN from 'antd/es/date-picker/locale/zh_CN';
 import { UploadOutlined } from '@ant-design/icons';
@@ -10,50 +10,50 @@ const { RangePicker } = DatePicker;
 
 const { Option } = Select;
 
-const Header = (props)=> {
-    const [time , setTime] = useState([]);  //时间筛选
-    const [hasPro , setHasPro] = useState([]); //包含的项目
-    const [hasFound , setHasFound] = useState([]); //包含的投资人
-    const [allPro , setAllPro] = useState([]); //所有的项目
-    const [allFound , setAllFound] = useState([]); //所有的found
+const Header = (props) => {
+    const [time, setTime] = useState([]);  //时间筛选
+    const [hasPro, setHasPro] = useState([]); //包含的项目
+    const [hasFound, setHasFound] = useState([]); //包含的投资人
+    const [allPro, setAllPro] = useState([]); //所有的项目
+    const [allFound, setAllFound] = useState([]); //所有的found
     const jsonData = useRef(null);
 
-    const toGeneralGraph = ()=> {
+    const toGeneralGraph = () => {
         // 过滤时间
         let json = _.cloneDeep(jsonData.current);
-        if(json && json.length){
-             let data = json.filter(item => {
-                let {date = '',  found = [],    project = ''} = item;
+        if (json && json.length) {
+            let data = json.filter(item => {
+                let { date = '', found = [], project = '' } = item;
                 let t = true;
-                let p = hasPro.length ?  hasPro.includes(project) : true;
-                found = found.filter(fName =>hasFound.length ? hasFound.includes(fName) : true);
+                let p = hasPro.length ? hasPro.includes(project) : true;
+                found = found.filter(fName => hasFound.length ? hasFound.includes(fName) : true);
                 item.allFounds = [...item.found];
                 item.found = found;
                 let f = found.length > 0;
-                if(hasFound.length){
+                if (hasFound.length) {
                     f = found.length === hasFound.length
                 }
-                if(time &&  time.length && ( date < time[0] || date> time[1])){
+                if (time && time.length && (date < time[0] || date > time[1])) {
                     t = false
                 };
                 return t && p && f;
-             });
+            });
             //  根据过滤后的数据生成 节点和 关系图
-             let nodes = [] , relations = [] ;
-             for (const item of data) {
-                let {date , description , found ,  id ,  project , round} = item;
-                let startNode = {} , endNode = {}  ;
+            let nodes = [], relations = [];
+            for (const item of data) {
+                let { date, description, found, id, project, round } = item;
+                let startNode = {}, endNode = {};
                 // 根据信息生成节点
                 endNode = {
-                    id : project,
-                    labels : ["Project"],
-                    className : 'Project',
-                    properties : {
-                        type : 'project',
+                    id: project,
+                    labels: ["Project"],
+                    className: 'Project',
+                    properties: {
+                        type: 'project',
                         project,
                         label_for_match: "Project",
-                        date ,
-                        name : project,
+                        date,
+                        name: project,
                         id,
                         description,
                         round
@@ -61,26 +61,28 @@ const Header = (props)=> {
                 }
                 for (const foundItem of found) {
                     startNode = {
-                        id : foundItem,
-                        labels : ['Person'],
-                        className : 'Person',
-                        properties : {type : 'fund' ,
-                        label_for_match: "Person", project , name : foundItem , date } 
+                        id: foundItem,
+                        labels: ['Person'],
+                        className: 'Person',
+                        properties: {
+                            type: 'fund',
+                            label_for_match: "Person", project, name: foundItem, date
+                        }
                     }
                     relations.push({
-                             id : `${foundItem}-${project}`,
-                             startNodeId : foundItem,
-                             endNodeId : project,
-                             type : 'fund to project',
-                             properties : {
-                                 name : `${id}->${project}`
-                             }
+                        id: `${foundItem}-${project}`,
+                        startNodeId: foundItem,
+                        endNodeId: project,
+                        type: 'fund to project',
+                        properties: {
+                            name: `${id}->${project}`
+                        }
                     })
                     nodes.push(startNode);
                 }
 
                 nodes.push(endNode);
-             }
+            }
             //  for (const item of data) {
             //     let {date , description , found ,  id ,  project , round} = item;
             //     if(!nodesMap[project]){
@@ -133,26 +135,26 @@ const Header = (props)=> {
             //      }
             //  }
 
-             props.onGeneral && props.onGeneral({nodes , relations})
+            props.onGeneral && props.onGeneral({ nodes, relations })
 
-        }else{
+        } else {
             message.error('请先上传json数据');
         }
     }
 
-    const onChangeTime = (value)=> {
-        if(value && value.length){
+    const onChangeTime = (value) => {
+        if (value && value.length) {
             setTime([
                 moment(new Date(value[0])).format('YYYY.HH.DD'),
                 moment(new Date(value[1])).format('YYYY.HH.DD')
             ])
-        }else{
+        } else {
             setTime([])
         }
     }
 
     // 选择包含的项目
-    const onChangeSelectPro = (value)=>{
+    const onChangeSelectPro = (value) => {
         setHasPro(value);
     }
 
@@ -161,32 +163,32 @@ const Header = (props)=> {
         setHasFound(value)
     }
 
-    const onChangeFile = (event)=> {
+    const onChangeFile = (event) => {
         var selectedFile = event.target.files[0];//获取读取的File对象
-        let {type } = selectedFile;
-        if(type  !== 'application/json'){
+        let { type } = selectedFile;
+        if (type !== 'application/json') {
             message.error('不支持此文件格式!');
             return;
         }
         var reader = new FileReader();//这里是核心！！！读取操作就是由它完成的。
-         reader.readAsText(selectedFile);//读取文件的内容
-         reader.onload = function(){
-             toHandleJson(JSON.parse(this.result));
-         };
-         
+        reader.readAsText(selectedFile);//读取文件的内容
+        reader.onload = function () {
+            toHandleJson(JSON.parse(this.result));
+        };
+
     }
 
-    const toHandleJson = (json)=>{
+    const toHandleJson = (json) => {
         // 生成节点和关系
-        let allProject = []  , allFound = [];
+        let allProject = [], allFound = [];
         for (const item of json) {
-            let {date , description , found ,  id ,  project = '' , round = 0} = item || {};
+            let { date, description, found, id, project = '', round = 0 } = item || {};
             allProject.push({
-                id : `${id}_${project}`,
-                name : project,
-                properties : {id , description , date , round }
+                id: `${id}_${project}`,
+                name: project,
+                properties: { id, description, date, round }
             });
-            allFound = [...new Set([...allFound , ...found])];   
+            allFound = [...new Set([...allFound, ...found])];
         }
         setAllPro(allProject);
         setAllFound(allFound);
@@ -194,55 +196,55 @@ const Header = (props)=> {
         setHasPro([allProject[0].name]);
         jsonData.current = json;
     }
-    
-    return(
-        <Row style={{padding : '20px'}}>
+
+    return (
+        <Row style={{ padding: '20px' }}>
             <Col span={4}>
                 <Button icon={<UploadOutlined />} className="input-button">
-                Upload JSON
+                    Upload JSON
                  <input type="file" onChange={onChangeFile} />
                 </Button>
             </Col>
             <Col span={4}>
-                <RangePicker  locale={zhCN} onChange={onChangeTime}/>
+                <RangePicker locale={zhCN} onChange={onChangeTime} />
             </Col>
             <Col span={12}>
-            <Select
-                mode="multiple"
-                style={{ width: '40%'  , marginLeft : 10}}
-                placeholder="project"
-                value={hasPro}
-                onChange={onChangeSelectPro}
-                optionLabelProp="label"
-            >
-                {
-                    allPro.map(item => (
-                        <Option value={item.name} label={item.name} key={item.id}>
-                        <div className="demo-option-label-item">
-                            {item.name}
-                        </div>
-                        </Option>
-                    ))
-                }
-            </Select>
-            <Select
-                mode="multiple"
-                style={{ width: '40%' , marginLeft : 15}}
-                placeholder="fund"
-                value={hasFound}
-                onChange={onChangeSelectFound}
-                optionLabelProp="label"
-            >
-                {
-                    allFound.map((item,index) => (
-                        <Option value={item} label={item} key={`${item}-${index}`}>
-                        <div className="demo-option-label-item">
-                            {item}
-                        </div>
-                        </Option>
-                    ))
-                }
-            </Select>
+                <Select
+                    mode="multiple"
+                    style={{ width: '40%', marginLeft: 10 }}
+                    placeholder="project"
+                    value={hasPro}
+                    onChange={onChangeSelectPro}
+                    optionLabelProp="label"
+                >
+                    {
+                        allPro.map(item => (
+                            <Option value={item.name} label={item.name} key={item.id}>
+                                <div className="demo-option-label-item">
+                                    {item.name}
+                                </div>
+                            </Option>
+                        ))
+                    }
+                </Select>
+                <Select
+                    mode="multiple"
+                    style={{ width: '40%', marginLeft: 15 }}
+                    placeholder="fund"
+                    value={hasFound}
+                    onChange={onChangeSelectFound}
+                    optionLabelProp="label"
+                >
+                    {
+                        allFound.map((item, index) => (
+                            <Option value={item} label={item} key={`${item}-${index}`}>
+                                <div className="demo-option-label-item">
+                                    {item}
+                                </div>
+                            </Option>
+                        ))
+                    }
+                </Select>
             </Col>
             <Col span="2" offset="1">
                 <Button type="primary" onClick={toGeneralGraph}>生成图谱</Button>
@@ -251,4 +253,4 @@ const Header = (props)=> {
     )
 }
 
-export default React.memo(Header , ()=> true)
+export default React.memo(Header, () => true)

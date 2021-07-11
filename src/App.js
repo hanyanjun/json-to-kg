@@ -1,10 +1,10 @@
 import './App.css';
-import Home from "./pages/home/Home"
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import Router from "./router"
 
 function App() {
   return (
-    <Home />
+    <Router />
   );
 }
 
