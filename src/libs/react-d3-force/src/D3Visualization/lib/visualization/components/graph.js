@@ -77,7 +77,7 @@ export default class Graph {
             node.display = 'hide'
           }
           this.nodeLabelsMap[v].push(node.id);
-          this.nodeLabelsMap[v] = [... new Set (this.nodeLabelsMap[v])];
+          this.nodeLabelsMap[v] = [...new Set (this.nodeLabelsMap[v])];
        })
     }
     return this;
@@ -323,7 +323,7 @@ export default class Graph {
         rel.display = 'show';
       }
       this.relLabelsMap[rel.type].push(rel.id);
-      this.relLabelsMap[rel.type] = [... new Set (this.relLabelsMap[rel.type])];
+      this.relLabelsMap[rel.type] = [...new Set (this.relLabelsMap[rel.type])];
     }
     return this;
   }
