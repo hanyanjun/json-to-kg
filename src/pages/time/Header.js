@@ -132,6 +132,7 @@ const Header = (props) => {
                 max = timestamp
             }
         }
+        console.log(obj);
         // 依据最大值 最小值 生成时间戳 
         let {times : timeLine ,chartData} = toGeneralTimeLine(min,max)
         resultData.current = {
@@ -155,10 +156,12 @@ const Header = (props) => {
             toRenderGraph()
         }).catch(_=>{
             console.log('跳过渲染!')
+            // toRenderGraph()
         })
     }
 
     const  filterData = () => {
+        
         return new Promise((resolve,reject)=> {
             let {start , end } = zoom.current
             // 截取在该时间段内的数据
@@ -182,10 +185,12 @@ const Header = (props) => {
             if(!nodes.some(item => item.id === rels[0].endNodeId)){
                 nodes.push(idMap.current[rels[0].endNodeId])
             }
-            resultData.current.nodes = nodes;
-            resultData.current.rels = rels;
+            console.log(times);
             if(!t || t.join(',') !== times.join(',')){
                 resultData.current.times = times
+                resultData.current.nodes = nodes
+                resultData.current.rels = rels
+                console.log('渲染', nodes, rels);
                 resolve(true);
             }
             reject(false)
@@ -264,6 +269,10 @@ const Header = (props) => {
             }
             iMap[rel.id] = rel;
             rels.push(rel)
+            // 可能会存在 source target 都已经生成 ，此时取之前生成的点 push进去
+            if(!nodes.length){
+                nodes.push(iMap[nMap[source].id])
+            }
         }
         nameMap.current = nMap
         idMap.current = iMap

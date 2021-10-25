@@ -15,6 +15,8 @@ export default function () {
     // 生成图谱函数
     const   onGeneral = ({ nodes, relations }) => {
         setNum(nodes.length);
+
+        console.log('传入数据',nodes , relations);
         
         if (!isFirst.current) {
             d3Force.current.initGraph({
